@@ -206,8 +206,7 @@ describe('API', () => {
 
   describe('DELETE /projects/:id', () => {
     it('should return a 204 error and the delete project', async () => {
-      const { id } = await database('projects').first('id');
-      const response = await request(app).delete(`/api/v1/projects/${id}`);
+      const response = await request(app).delete(`/api/v1/projects/1`);
 
       expect(response.status).toBe(204)
     })
