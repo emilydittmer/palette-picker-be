@@ -15,9 +15,10 @@ describe('Server', () => {
   })
 })
 describe('API', () => {
-  beforeEach(() => {
-    cmd.run('knex seed:run --env=test')
-  })
+  // beforeEach(() => {
+  //   cmd.run('knex seed:run --env=test')
+
+  // })
   describe('GET /api/v1/projects', () => {
     xit('should return a status of 200 and all projects', async () => {
       const expectedProjects = await database('projects').first()
