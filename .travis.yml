@@ -5,7 +5,7 @@ services:
 - postgresql
 before_script:
 - psql -c 'CREATE DATABASE pplibrary_test;' -U postgres
-- 'knex migrate:latest'
+- 'knex migrate:latest --env=test'
 - 'knex seed:run --env=test'
 notifications:
   email: false
