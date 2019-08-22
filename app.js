@@ -108,10 +108,14 @@ app.put('/api/v1/projects/:id', (request, response) => {
   database('projects').where('id', request.params.id).select()
     .update( newProject )
     .then(project => {
-      return response.status(202).json(project)
-    })
-    .catch(error => {
-      return response.status(404).json({ error })
+      if(project) {
+        return response.status(202).json(project)
+        .catch(error => {
+          return response.status(500).json({ error })
+        })
+      } else {
+        return response.status(404).json({error: `No project found with the id of ${request.params.id}`})
+      }
     })
 })
 
@@ -123,16 +127,18 @@ app.patch('/api/v1/palettes/:id', (request, response) => {
       return response.status(422)
       .json({ error: `Your new project was not updated. You are missing the ${colorKey} property`})
     } 
-
-    
     
     database('palettes').where('id', request.params.id).select()
       .update(newColor).returning('*')
       .then(palette => {
-        return response.status(202).json( ...palette )
-      })
-      .catch(error => {
-        return response.status(404).json({ error })
+        if(palette.length) {
+          return response.status(202).json( ...palette )
+          .catch(error => {
+            return response.status(500).json({ error })
+          })
+        } else {
+          return response.status(404).json({error: `No palette found with the id of ${request.params.id}`})
+        }
       })
 })
 
