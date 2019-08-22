@@ -170,6 +170,16 @@ describe('API', () => {
       expect(response.status).toBe(422)
       expect(error).toEqual(expectedError)
     })
+
+    it('should return a 404 status if the id does not exist', async () => {
+      const newProject = {
+        'title': 'New Project'
+      }
+
+      const response = await request(app).put('/api/v1/projects/-1').send(newProject)
+
+      expect(response.status).toBe(404)
+    })
   })
 
   describe('PATCH /api/v1/palettes/:id', () => {
@@ -192,15 +202,14 @@ describe('API', () => {
       expect(response.status).toBe(202)
     })
 
-    xit('should return a 404 status if palette could not be updated', async () => {
-      const id  = 0;
+    it('should return a 404 status if palette could not be updated', async () => {
+
       const requestBody = {color_1:'#ffffff'};
 
-      const response = await request(app).patch(`/api/v1/palettes/20`).send(requestBody);
+      const response = await request(app).patch(`/api/v1/palettes/-1`).send(requestBody);
       const error = response.body
 
       expect(response.status).toBe(404)
-      expect(response.body).toEqual()
     })
   })
 
