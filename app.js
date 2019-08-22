@@ -108,7 +108,7 @@ app.put('/api/v1/projects/:id', (request, response) => {
   database('projects').where('id', request.params.id).select()
     .update( newProject )
     .then(project => {
-      return response.status(202).json({ project })
+      return response.status(202).json(project)
     })
     .catch(error => {
       return response.status(404).json({ error })
@@ -124,6 +124,8 @@ app.patch('/api/v1/palettes/:id', (request, response) => {
       .json({ error: `Your new project was not updated. You are missing the ${colorKey} property`})
     } 
 
+    
+    
     database('palettes').where('id', request.params.id).select()
       .update(newColor).returning('*')
       .then(palette => {
