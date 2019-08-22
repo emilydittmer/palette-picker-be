@@ -16,7 +16,7 @@ describe('Server', () => {
 })
 describe('API', () => {
   beforeEach(() => {
-    cmd.run('knex seed:run --env=test')
+    cmd.run(' npx knex seed:run' )
   })
   describe('GET /api/v1/projects', () => {
     it('should return a status of 200 and all projects', async () => {
@@ -59,7 +59,7 @@ describe('API', () => {
     it('should return a 404 error if cannot find project by id', async () => {
       const expected = 'ERROR: Cannot find project id'
 
-      const response = await request(app).get('/api/v1/projects/4')
+      const response = await request(app).get('/api/v1/projects/200')
       const project = response.body
 
       expect(response.status).toBe(404)
@@ -82,7 +82,7 @@ describe('API', () => {
     it('should return a status of 404 if cant find a palette by id', async () => {
       const expectedResponse = 'ERROR: Cannot find palette id'
 
-      const response = await request(app).get('/api/v1/palettes/6')
+      const response = await request(app).get('/api/v1/palettes/200')
       const palette = response.body
 
       expect(response.status).toBe(404)
@@ -105,7 +105,70 @@ describe('API', () => {
     })
 
     it('should return a status of 422 and error message if missing information', async () => {
+      const newProject = {}
 
+      const response = await request(app).post('/api/v1/projects').send(newProject)
+      const project = response.body
+      expect(response.status).toBe(422)
+      expect(project).toEqual({"Error": "Your new project was not added. You are missing the title property"})
+    })
+  })
+
+  describe('POST /api/v1/palettes', () => {
+    it('should return a 201 status and the object', async () => {
+      const newPalette = {
+        'color_1': "red",
+        'color_2': "red",
+        'color_3': "red",
+        'color_4': "red",
+        'color_5': "red",
+        'project_id': 1
+      }
+
+      const response = await request(app).post('/api/v1/palettes').send(newPalette)
+      const paletteId = response.body.id
+      const maxId = await database('palettes').max('id')
+
+      expect(response.status).toBe(201)
+      expect(paletteId).toEqual(maxId[0].max)
+    })
+
+    it('should return a 422 status and error message if missing parameter', async () => {
+      const newPalette = {}
+
+      const response = await request(app).post('/api/v1/palettes').send(newPalette)
+      const errorMsg = response.body
+      const expectedError = {"Error": "Your new project was not added. You are missing the project_id property"}
+
+      expect(response.status).toBe(422)
+      expect(errorMsg).toEqual(expectedError)
+    })
+  })
+
+  describe('PUT /api/v1/projects/:id', () => {
+    it('should return a 202 status and the project object', async () => {
+      const newProject = {
+        'title': 'New Project'
+      }
+
+      const response = await request(app).put('/api/v1/projects/2').send(newProject)
+      const project = response.body
+      const putProject = await database('projects').first()
+        .then(project => project.id)
+
+      expect(response.status).toBe(202)
+      expect(project).toEqual(putProject)
+    })
+
+    it('should return a 422 status and error message if missing the title', async () => {
+      const newProject = {}
+
+      const response = await request(app).put('/api/v1/projects/2').send(newProject)
+      const error = response.body
+      const expectedError = {Error: `Your new project was not updated. You are missing the title property`}
+
+      expect(response.status).toBe(422)
+      expect(error).toEqual(expectedError)
     })
   })
 
@@ -133,17 +196,17 @@ describe('API', () => {
       const id  = 0;
       const requestBody = {color_1:'#ffffff'};
 
-      const response = await request(app).patch(`/api/v1/palettes/0`).send(requestBody);
+      const response = await request(app).patch(`/api/v1/palettes/20`).send(requestBody);
+      const error = response.body
 
       expect(response.status).toBe(404)
-      expect(response.error).toEqual()
+      expect(response.body).toEqual()
     })
   })
 
   describe('DELETE /projects/:id', () => {
     it('should return a 204 error and the delete project', async () => {
-      const { id } = await database('projects').first('id');
-      const response = await request(app).delete(`/api/v1/projects/${id}`);
+      const response = await request(app).delete(`/api/v1/projects/1`);
 
       expect(response.status).toBe(204)
     })
