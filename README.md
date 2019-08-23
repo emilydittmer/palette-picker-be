@@ -131,7 +131,7 @@ updated_at: "2019-08-22T19:14:02.632Z"
 - This endpoint will allow a user to update a single field in a palette
 - Should return a message if the palette was successfully updated
 
-** Required properties: olor_1, color_2, color_3, color_4 or color_5
+** Required properties: color_1, color_2, color_3, color_4 or color_5
 
 
 ### DELETE /api/v1/project/:id
