@@ -320,7 +320,7 @@ describe("API", () => {
         expect(response.body[0].title).toEqual(mockTitle)
     })
 
-    it('should return a 404 error if project does not exist', () => {
+    it('should return a 404 error if project does not exist', async () => {
       const response = await request(app).get('/api/v1/search?title=x123')
       expect(response.state).toBe(404)
     })
