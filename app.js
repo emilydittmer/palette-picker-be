@@ -240,4 +240,19 @@ app.delete("/api/v1/palettes/:id", (request, response) => {
     });
 });
 
+app.get("/api/v1/search", async (request, response) => {
+  const title = request.query.title
+  database('projects')
+    .where('title', title)
+    .select()
+    .then(project => {
+      if(project){
+        response.status(200).json(project)
+      } else {
+        response.status(404).json('Project not found')
+      }
+    })
+    .catch(error => response.status(500).json({error}))
+})
+
 module.exports = app;

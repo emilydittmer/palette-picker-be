@@ -311,4 +311,18 @@ describe("API", () => {
       expect(response.status).toBe(404);
     });
   });
+
+  describe('GET /search', () => {
+    it('should return a 200 status code and the project by name', async () => {
+        const mockTitle = await database('projects').first('name').then(object => object.name)
+        const response = await request(app).get(`/api/v1/search?title=${mockTitle}`)
+        expect(response.status).toBe(200)
+        expect(response.body[0].title).toEqual(mockTitle)
+    })
+
+    it('should return a 404 error if project does not exist', () => {
+      const response = await request(app).get('/api/v1/search?title=x123')
+      expect(response.state).toBe(404)
+    })
+  })
 });
