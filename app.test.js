@@ -313,7 +313,7 @@ describe("API", () => {
   });
 
   describe('GET /search', () => {
-    it('should return a 200 status code and the project by title', async () => {
+    it('should return a 200 and the project by title', async () => {
         const mockTitle = await database('projects').first('title').then(object => object.title)
         const response = await request(app).get(`/api/v1/search?title=${mockTitle}`)
         expect(response.status).toBe(200)
